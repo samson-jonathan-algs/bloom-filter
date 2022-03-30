@@ -21,6 +21,14 @@ public class RandomHash {
 
     }
 
+    @Override
+    public String toString() {
+        if (decider < 1) {
+            return String.format("h(x) = (%dx + %d) % %d", a, b, range);
+        }
+        return "";
+    }
+
     public int hash(int num) {
         if (decider < 1) {
             return ((num*a)+b)%range;
