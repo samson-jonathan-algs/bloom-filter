@@ -1,5 +1,7 @@
 import hashing.RandomHash;
 
+import java.util.Arrays;
+
 public class BloomFilter {
     private int numBit = 1;
     private int numElems;
@@ -55,6 +57,12 @@ public class BloomFilter {
         return false;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+        return "keys: " + Arrays.toString(keys) + "\nfilter: " + Arrays.toString(intFilter);
+    }
+
     public static void main(String[] args){
         int[] ints1 = randomIntArray(10, 36);
         BloomFilter bloomFilter = new BloomFilter(ints1);
@@ -71,6 +79,8 @@ public class BloomFilter {
                 System.out.println("key not in array: " + currElem);
             }
         }
+
+        System.out.println(bloomFilter);
     }
 
     private static int[] randomIntArray(int size, int range){
