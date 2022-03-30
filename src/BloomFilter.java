@@ -6,16 +6,17 @@ public class BloomFilter {
     private int numHashes = 5;
 
     // public BitSet filter = new BitSet(NUM_BITS*NUM_ELEMS*NUM_HASHES);
-    private int[] intFilter = new int[numBit * numElems * numHashes];
+    private int[] intFilter;
     // private List<Integer> intList = new ArrayList<Integer>();
     private int[] keys = new int[numElems];
 
     public RandomHash[] randomHashes = new RandomHash[numHashes];
 
     public BloomFilter(int[] keys){
-        initializeHashes();
         this.keys = keys;
         this.numElems = keys.length;
+        this.intFilter = new int[numBit * numElems * numHashes];
+        initializeHashes();
         addKeys();
     }
 
@@ -55,19 +56,28 @@ public class BloomFilter {
     }
 
     public static void main(String[] args){
-        int[] keys = new int[]{1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 10};
+        int[] ints1 = randomIntArray(10, 36);
+        BloomFilter bloomFilter = new BloomFilter(ints1);
 
-        BloomFilter bloomFilter = new BloomFilter(keys);
+        int[] queries1 = randomIntArray(10, 36);
+        for (int i = 0; i < queries1.length; i++){
+            int currElem = queries1[i];
 
-        int[] queries = new int[]{1, 12, 13, 14, 7, 16, 17, 18, 19, 35};
-        for (int i = 0; i < queries.length; i++){
-            if(bloomFilter.query(queries[i]) && !bloomFilter.authQuery(queries[i])){
-                System.out.println("false positive: " + queries[i]);
-            } else if (bloomFilter.query(queries[i])){
-                System.out.println("key in array: " +  queries[i]);
+            if(bloomFilter.query(currElem) && !bloomFilter.authQuery(currElem)){
+                System.out.println("false positive: " + currElem);
+            } else if (bloomFilter.query(currElem)){
+                System.out.println("key in array: " +  currElem);
             } else {
-                System.out.println("key not in array: " + queries[i]);
+                System.out.println("key not in array: " + currElem);
             }
         }
+    }
+
+    private static int[] randomIntArray(int size, int range){
+        int[] ints = new int[size];
+        for(int i = 0; i < ints.length; i++){
+            ints[i] = (int) (Math.random() * range);
+        }
+        return ints;
     }
 }
