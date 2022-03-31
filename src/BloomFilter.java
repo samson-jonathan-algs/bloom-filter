@@ -63,6 +63,12 @@ public class BloomFilter {
         return "keys: " + Arrays.toString(keys) + "\nfilter: " + Arrays.toString(intFilter);
     }
 
+    public void hashString(){
+        for (int i = 0; i < randomHashes.length; i++){
+            System.out.println(randomHashes[i]);
+        }
+    }
+
     public static void main(String[] args){
         int[] ints1 = randomIntArray(10, 36);
         BloomFilter bloomFilter = new BloomFilter(ints1);
@@ -81,6 +87,7 @@ public class BloomFilter {
         }
 
         System.out.println(bloomFilter);
+        bloomFilter.hashString();
     }
 
     private static int[] randomIntArray(int size, int range){
