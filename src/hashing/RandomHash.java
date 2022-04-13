@@ -24,7 +24,7 @@ public class RandomHash {
     @Override
     public String toString() {
         if (decider < 1) {
-            return String.format("h(x) = (%dx + %d) mod %d", a, b, range);
+            return String.format("h(x) = (%dx + %d) %% %d", a, b, range);
         }
         return "";
     }
