@@ -1,6 +1,7 @@
 import hashing.RandomHash;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 public class BloomFilter {
     private int numBit = 1;
@@ -9,9 +10,9 @@ public class BloomFilter {
     private int primeNumber = 83;
     // used for hashing, must be larger than the largest possible key
 
-    // public BitSet filter = new BitSet(NUM_BITS*NUM_ELEMS*NUM_HASHES);
-    private int[] intFilter;
-    // private List<Integer> intList = new ArrayList<Integer>();
+    public BitSet filter;
+//    private int[] intFilter;
+//    private List<Integer> intList = new ArrayList<Integer>();
     private int[] keys;
 
     public RandomHash[] randomHashes = new RandomHash[numHashes];
@@ -19,7 +20,8 @@ public class BloomFilter {
     public BloomFilter(int[] keys){
         this.keys = keys;
         this.numElems = keys.length;
-        this.intFilter = new int[numBit * numElems * numHashes];
+//        this.intFilter = new int[numBit * numElems * numHashes];
+        this.filter = new BitSet(numBit*numElems*numHashes);
         initializeHashes();
         addKeys();
     }
@@ -32,7 +34,8 @@ public class BloomFilter {
 
     public void addKey(int key){
         for(int i = 0; i < randomHashes.length; i++){
-            intFilter[randomHashes[i].hash(key)] = 1;
+//            intFilter[randomHashes[i].hash(key)] = 1;
+            filter.set(randomHashes[i].hash(key));
         }
         // intList.add(key);
     }
@@ -44,8 +47,12 @@ public class BloomFilter {
     }
 
     public boolean query(int key){
+//        for (int i = 0; i < numHashes; i++){
+//            if(intFilter[randomHashes[i].hash(key)] == 0)
+//                return false;
+//        }
         for (int i = 0; i < numHashes; i++){
-            if(intFilter[randomHashes[i].hash(key)] == 0)
+            if(!filter.get(randomHashes[i].hash(key)))
                 return false;
         }
         return true;
@@ -62,7 +69,7 @@ public class BloomFilter {
     @Override
     public String toString() {
         String str = "";
-        return "keys: " + Arrays.toString(keys) + "\nfilter: " + Arrays.toString(intFilter);
+        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filter;
     }
 
     public void hashString(){
@@ -72,10 +79,10 @@ public class BloomFilter {
     }
 
     public static void main(String[] args){
-        int[] ints1 = randomIntArray(10, 36);
+        int[] ints1 = randomIntArray(10, 20);
         BloomFilter bloomFilter = new BloomFilter(ints1);
 
-        int[] queries1 = randomIntArray(10, 36);
+        int[] queries1 = randomIntArray(100, 5);
         for (int i = 0; i < queries1.length; i++){
             int currElem = queries1[i];
 
@@ -90,6 +97,8 @@ public class BloomFilter {
 
         System.out.println(bloomFilter);
         bloomFilter.hashString();
+
+        System.out.println(5);
     }
 
     private static int[] randomIntArray(int size, int range){

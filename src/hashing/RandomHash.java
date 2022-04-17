@@ -28,7 +28,7 @@ public class RandomHash {
     @Override
     public String toString() {
         if (decider < 1) {
-            return String.format("h(k) = ((%dk + %d) mod %d) mod %d", a, b, prime, range);
+            return String.format("h(k) = ((%dk + %d) %% %d) %% %d", a, b, prime, range);
         }
         return "";
     }
