@@ -8,7 +8,7 @@ public class BloomFilter {
     private int numElems;
     private int numHashes = 2;
     private double fpRate = 0.01;
-    private int primeNumber = 83;
+    private int primeNumber = 7919/*83*/;
     // used for hashing, must be larger than the largest possible key
 
     public BitSet filter;
@@ -102,21 +102,25 @@ public class BloomFilter {
     }
 
     public static void main(String[] args){
-        int[] ints1 = randomIntArray(10, 20);
-        BloomFilter bloomFilter = new BloomFilter(ints1, 6);
+        int[] ints1 = randomIntArray(10, 2000);
+        BloomFilter bloomFilter = new BloomFilter(ints1, 6, 0.01);
 
-        int[] queries1 = randomIntArray(100, 5);
+        int numQueries = 5000;
+        int[] queries1 = randomIntArray(numQueries, 2000);
+        int falsePositives = 0;
         for (int i = 0; i < queries1.length; i++){
             int currElem = queries1[i];
 
             if(bloomFilter.query(currElem) && !bloomFilter.authQuery(currElem)){
                 System.out.println("false positive: " + currElem);
+                falsePositives++;
             } else if (bloomFilter.query(currElem)){
                 System.out.println("key in array: " +  currElem);
             } else {
                 System.out.println("key not in array: " + currElem);
             }
         }
+        System.out.println("Tested false positive rate: " + falsePositives/(double)numQueries + "(" + falsePositives + "/" + numQueries + ")");
 
         System.out.println(bloomFilter);
         bloomFilter.hashString();
