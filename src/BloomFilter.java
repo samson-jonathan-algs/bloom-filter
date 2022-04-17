@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 public class BloomFilter {
-    private int numBit = 1;
+    private int numBits = 8;
     private int numElems;
-    private int numHashes = 5;
+    private int numHashes = 2;
+    private double fpRate = 0.01;
     private int primeNumber = 83;
     // used for hashing, must be larger than the largest possible key
 
@@ -15,20 +16,42 @@ public class BloomFilter {
 //    private List<Integer> intList = new ArrayList<Integer>();
     private int[] keys;
 
-    public RandomHash[] randomHashes = new RandomHash[numHashes];
+    public RandomHash[] randomHashes;
 
     public BloomFilter(int[] keys){
         this.keys = keys;
         this.numElems = keys.length;
 //        this.intFilter = new int[numBit * numElems * numHashes];
-        this.filter = new BitSet(numBit*numElems*numHashes);
+        this.filter = new BitSet(numBits *numElems*numHashes);
         initializeHashes();
         addKeys();
     }
 
+    public BloomFilter(int[] keys, int numBits, double fpRate){
+        this.keys = keys;
+        this.numElems = keys.length;
+        this.numBits = numBits;
+        this.fpRate = fpRate;
+        while (calcFpRate(numHashes, this.numBits) > this.fpRate && calcFpRate(numHashes+1, this.numBits) < calcFpRate(numHashes, this.numBits)) {
+            numHashes++;
+        }
+        this.filter = new BitSet(this.numBits*numElems);
+        initializeHashes();
+        addKeys();
+    }
+
+    public BloomFilter(int[] keys, int numBits) {
+        this(keys, numBits, 0.05);
+    }
+
+    private static double calcFpRate(int numHashes, int numBits) {
+        return Math.pow(1.0 - Math.exp(-numHashes/(double)numBits), numHashes);
+    }
+
     private void initializeHashes(){
+        randomHashes = new RandomHash[numHashes];
         for(int i = 0; i < randomHashes.length; i++){
-            randomHashes[i] = new RandomHash(numBit, numElems, numHashes, primeNumber);
+            randomHashes[i] = new RandomHash(numBits, numElems, numHashes, primeNumber);
         }
     }
 
@@ -80,7 +103,7 @@ public class BloomFilter {
 
     public static void main(String[] args){
         int[] ints1 = randomIntArray(10, 20);
-        BloomFilter bloomFilter = new BloomFilter(ints1);
+        BloomFilter bloomFilter = new BloomFilter(ints1, 6);
 
         int[] queries1 = randomIntArray(100, 5);
         for (int i = 0; i < queries1.length; i++){
@@ -98,7 +121,6 @@ public class BloomFilter {
         System.out.println(bloomFilter);
         bloomFilter.hashString();
 
-        System.out.println(5);
     }
 
     private static int[] randomIntArray(int size, int range){

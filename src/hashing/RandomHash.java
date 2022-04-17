@@ -11,7 +11,7 @@ public class RandomHash {
     private double decider;
 
     public RandomHash(int m, int n, int b, int prime) {
-        this.range = m*n*b;
+        this.range = m*n;//*b;
         this.prime = prime;
 
         Random rand = new Random();
