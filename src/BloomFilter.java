@@ -2,6 +2,7 @@ import hashing.RandomHash;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Scanner;
 
 public class BloomFilter {
     private int numBits = 8;
@@ -92,13 +93,15 @@ public class BloomFilter {
     @Override
     public String toString() {
         String str = "";
-        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filter;
+        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filter + "\nhashes:\n" + hashString();
     }
 
-    public void hashString(){
+    public String hashString(){
+        String s = "";
         for (int i = 0; i < randomHashes.length; i++){
-            System.out.println(randomHashes[i]);
+            s += randomHashes[i] + "\n";
         }
+        return s;
     }
 
     public static void main(String[] args){
@@ -125,6 +128,84 @@ public class BloomFilter {
         System.out.println(bloomFilter);
         bloomFilter.hashString();
 
+        Scanner input = new Scanner(System.in);
+        System.out.println("\nHi! To create a bloom filter, first enter how many elements will be in the bloom filter:");
+        boolean loopCond = true;
+        int[] userInts = new int[0];
+        while (loopCond) {
+            if (input.hasNextInt()) {
+                userInts = new int[input.nextInt()];
+                loopCond = false;
+            } else {
+                input.nextLine();
+                System.out.println("Enter a valid Integer value.");
+            }
+        }
+        System.out.println("Great! Now enter the elements you want inserted in the bloom filter one at a time.");
+        for (int i = 0; i < userInts.length; i++) {
+            loopCond = true;
+            while (loopCond) {
+                if (input.hasNextInt()) {
+                    userInts[i] = input.nextInt();
+                    loopCond = false;
+                } else {
+                    input.nextLine();
+                    System.out.println("Enter a valid Integer value.");
+                }
+            }
+        }
+        System.out.println("Next, you have the option to specify a desired number of bits per element. If you'd like to use the default value, just enter -1");
+        int userBits = 0;
+        loopCond = true;
+        while (loopCond) {
+            if (input.hasNextInt()) {
+                userBits = input.nextInt();
+                loopCond = false;
+            } else {
+                input.nextLine();
+                System.out.println("Enter a valid Integer value.");
+            }
+        }
+        double userFPRate = -1;
+        if (userBits != -1) {
+            System.out.println("Finally, you have the option to specify a desired false positive rate. If you'd like to use the default value, just enter -1");
+            loopCond = true;
+            while (loopCond) {
+                if (input.hasNextInt()) {
+                    userFPRate = input.nextDouble();
+                    loopCond = false;
+                } else {
+                    input.nextLine();
+                    System.out.println("Enter a valid Double value.");
+                }
+            }
+        }
+        BloomFilter userFilter;
+        if (userFPRate == -1 && userBits == -1) {
+            userFilter = new BloomFilter(userInts);
+        } else if (userFPRate == -1) {
+            userFilter = new BloomFilter(userInts, userBits);
+        } else {
+            userFilter = new BloomFilter(userInts, userBits, userFPRate);
+        }
+        System.out.println("Great! Your bloom filter is all set up now.\nHere are its details:\n" + userFilter + "You can now enter any value to query it.");
+        int query;
+        while (true) {
+            if (input.hasNextInt()) {
+                query = input.nextInt();
+                if(userFilter.query(query) && !userFilter.authQuery(query)){
+                    System.out.println("false positive: " + query);
+//                    falsePositives++;
+                } else if (userFilter.query(query)){
+                    System.out.println("key in array: " +  query);
+                } else {
+                    System.out.println("key not in array: " + query);
+                }
+            } else {
+                input.nextLine();
+                System.out.println("Enter a valid Integer value.");
+            }
+        }
     }
 
     private static int[] randomIntArray(int size, int range){
