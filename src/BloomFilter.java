@@ -6,11 +6,13 @@ public class BloomFilter {
     private int numBit = 1;
     private int numElems;
     private int numHashes = 5;
+    private int primeNumber = 83;
+    // used for hashing, must be larger than the largest possible key
 
     // public BitSet filter = new BitSet(NUM_BITS*NUM_ELEMS*NUM_HASHES);
     private int[] intFilter;
     // private List<Integer> intList = new ArrayList<Integer>();
-    private int[] keys = new int[numElems];
+    private int[] keys;
 
     public RandomHash[] randomHashes = new RandomHash[numHashes];
 
@@ -24,7 +26,7 @@ public class BloomFilter {
 
     private void initializeHashes(){
         for(int i = 0; i < randomHashes.length; i++){
-            randomHashes[i] = new RandomHash(numBit, numElems, numHashes);
+            randomHashes[i] = new RandomHash(numBit, numElems, numHashes, primeNumber);
         }
     }
 
