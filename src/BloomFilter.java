@@ -22,8 +22,8 @@ public class BloomFilter {
     public BloomFilter(int[] keys){
         this.keys = keys;
         this.numElems = keys.length;
-//        this.intFilter = new int[numBit * numElems * numHashes];
         this.filter = new BitSet(numBits *numElems*numHashes);
+//        this.primeNumber = nextPrimeNumber();
         initializeHashes();
         addKeys();
     }
@@ -37,6 +37,7 @@ public class BloomFilter {
             numHashes++;
         }
         this.filter = new BitSet(this.numBits*numElems);
+//        this.primeNumber = nextPrimeNumber();
         initializeHashes();
         addKeys();
     }
@@ -44,6 +45,20 @@ public class BloomFilter {
     public BloomFilter(int[] keys, int numBits) {
         this(keys, numBits, 0.05);
     }
+
+//    private int nextPrimeNumber() {
+//        primeNumber = numElems*numBits;
+//        for (int i = 2; i < primeNumber; i++) {
+//            if(primeNumber%i == 0) {
+//                primeNumber++;
+//                i=2;
+//            } else {
+//                continue;
+//            }
+//        }
+//        System.out.println(primeNumber);
+//        return primeNumber;
+//    }
 
     private static double calcFpRate(int numHashes, int numBits) {
         return Math.pow(1.0 - Math.exp(-numHashes/(double)numBits), numHashes);
@@ -92,12 +107,15 @@ public class BloomFilter {
 
     @Override
     public String toString() {
-        String str = "";
-        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filterString() + "\nhashes:\n" + hashString();
+        return "keys: " + Arrays.toString(keys) + "\nfilter:\n" + filterString() + "\nhashes:\n" + hashString();
     }
     
     public String filterString(){
-        String s = "[";
+        String s = "";
+        for (int i = 0; i < filter.length(); i++){
+            s += String.format("%4d", i);
+        }
+        s += "\n| ";
         for (int i = 0; i < filter.length(); i++){
             if(filter.get(i)){
                 s += "1";
@@ -106,10 +124,10 @@ public class BloomFilter {
             }
 
             if(i != filter.length() - 1) {
-                s += ", ";
+                s += " | ";
             }
         }
-        s += "]";
+        s += "|";
         return s;
     }
 
@@ -188,7 +206,7 @@ public class BloomFilter {
             System.out.println("Finally, you have the option to specify a desired false positive rate. If you'd like to use the default value, just enter -1");
             loopCond = true;
             while (loopCond) {
-                if (input.hasNextInt()) {
+                if (input.hasNextDouble()) {
                     userFPRate = input.nextDouble();
                     loopCond = false;
                 } else {
