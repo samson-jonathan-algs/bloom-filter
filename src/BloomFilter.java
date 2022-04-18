@@ -1,5 +1,6 @@
 import hashing.RandomHash;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Scanner;
@@ -140,11 +141,21 @@ public class BloomFilter {
     }
 
     public static void main(String[] args){
-        int[] ints1 = randomIntArray(10, 2000);
+        ArrayList<Integer> allKeys = new ArrayList<>();
+        for (int i = 0; i < 2000; i++) {
+            allKeys.add(i);
+        }
+//        int[] ints1 = randomIntArray(10, 2000);
+        int[] ints1 = new int[10];
+        int[] queries1 = new int[10];
+        for (int i = 0; i < ints1.length; i++) {
+            ints1[i] = allKeys.remove((int)(Math.random() * allKeys.size()));
+            queries1[i] = allKeys.remove((int)(Math.random() * allKeys.size()));
+        }
         BloomFilter bloomFilter = new BloomFilter(ints1, 6, 0.01);
 
-        int numQueries = 5000;
-        int[] queries1 = randomIntArray(numQueries, 2000);
+//        int numQueries = 5000;
+//        int[] queries1 = randomIntArray(numQueries, 2000);
         int falsePositives = 0;
         for (int i = 0; i < queries1.length; i++){
             int currElem = queries1[i];
@@ -158,7 +169,7 @@ public class BloomFilter {
                 System.out.println("key not in array: " + currElem);
             }
         }
-        System.out.println("Tested false positive rate: " + falsePositives/(double)numQueries + "(" + falsePositives + "/" + numQueries + ")");
+        System.out.println("Tested false positive rate: " + falsePositives/(double)queries1.length + "(" + falsePositives + "/" + queries1.length + ")");
 
         System.out.println(bloomFilter);
         bloomFilter.hashString();
