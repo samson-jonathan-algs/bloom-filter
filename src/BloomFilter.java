@@ -93,7 +93,24 @@ public class BloomFilter {
     @Override
     public String toString() {
         String str = "";
-        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filter + "\nhashes:\n" + hashString();
+        return "keys: " + Arrays.toString(keys) + "\nfilter: " + filterString() + "\nhashes:\n" + hashString();
+    }
+    
+    public String filterString(){
+        String s = "[";
+        for (int i = 0; i < filter.length(); i++){
+            if(filter.get(i)){
+                s += "1";
+            } else {
+                s += "0";
+            }
+
+            if(i != filter.length() - 1) {
+                s += ", ";
+            }
+        }
+        s += "]";
+        return s;
     }
 
     public String hashString(){
